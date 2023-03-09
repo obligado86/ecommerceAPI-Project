@@ -10,7 +10,7 @@ const adminRoute = require("./app/routes/adminRoute");
 const userRoute = require("./app/routes/userRoute");
 const sellerRoute = require("./app/routes/sellerRoute");
 const productRoute = require("./app/routes/productRoute");
-const transactionRoute = require("./app/routes/transactionRoute");
+const orderRoute = require("./app/routes/orderRoute");
 
 //================== Connection =================//
 

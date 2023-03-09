@@ -28,27 +28,27 @@ const userSchema = new mongoose.Schema({
 		{
 			houseNoUnitNo: {
 				type: String,
-				required: true
+				default: ""
 			},
 			street: {
 				type: String,
-				required: true
+				default: ""
 			},
 			town: {
 				type: String,
-				required: true
+				default: ""
 			},
 			city: {
 				type: String,
-				required: true
+				default: ""
 			},
 			region: {
 				type: String,
-				required: true
+				default: ""
 			},
 			zipCode: {
 				type: String,
-				required: true 
+				default: ""
 			}
 		}
 	],
@@ -56,9 +56,9 @@ const userSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
-	purchase: [{
+	orders: [{
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "Transaction"
+		ref: "Order"
 	}],
 	isAdmin: {
 		type: Boolean,
@@ -68,11 +68,6 @@ const userSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
-	seller: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Seller"
-	}
-
 });
 
 //============== End of Schema ===============//

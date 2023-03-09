@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 //================= Schema ==================//
 
-const transactionSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema({
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User"
@@ -44,4 +44,4 @@ const transactionSchema = new mongoose.Schema({
 
 //============== End of Schema ==============//
 
-module.exports = mongoose.model("Transaction", transactionSchema);
+module.exports = mongoose.model("Order", orderSchema);

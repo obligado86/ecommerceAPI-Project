@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 //================= Schema ==================//
 
-const productSchema = new mongoose.Schema({
+const sellerSchema = new mongoose.Schema({
 
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -16,7 +16,7 @@ const productSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	storeAdress: [{
+	storeAddress: [{
 		houseNoUnitNo: {
 		type: String,
 		required: true
@@ -35,11 +35,11 @@ const productSchema = new mongoose.Schema({
 		},
 		region: {
 			type: String,
-			required: true;
+			required: true
 		},
 		zipCode: {
 			type: String,
-			required: true; 
+			required: true
 		}
 	}],
 	products: [{
@@ -51,4 +51,4 @@ const productSchema = new mongoose.Schema({
 
 //============== End of Schema ==============//
 
-module.exports = mongoose.model("Seller", transactionSchema);
+module.exports = mongoose.model("Seller", sellerSchema);

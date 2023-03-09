@@ -1,7 +1,7 @@
 //=================== Model Schema Link =================//
 
 const User = require("../models/User");
-const Transaction = require("../models/Transaction");
+const Order = require("../models/Order");
 const Product = require("../models/Product");
 const Admin = require("../models/Admin");
 

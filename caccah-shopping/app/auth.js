@@ -10,7 +10,7 @@ module.exports.createAccessToken = (user) => {
 	const data ={
 		id: user._id,
 		email: user.email,
-		isAdmin: user.isAdmin
+		isAdmin: user.isAdmin,
 		isSeller: user.isSeller
 	};
 	return jwt.sign(data, secretKey, {});

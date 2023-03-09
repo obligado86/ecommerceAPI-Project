@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema({
 		type: String,
 		default: "None"
 	},
-	vendor: {
+	Seller: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Seller"
 	},
@@ -37,7 +37,7 @@ const productSchema = new mongoose.Schema({
 	},
 	rating: [{
 		user: {
-			type: mongoose.Schema.types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: "User"
 		},
 		rating: {

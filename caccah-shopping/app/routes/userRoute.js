@@ -6,7 +6,35 @@ const auth = require("../auth");
 //====================== Routers =====================//
 
 router.post("/register", (req, res) => {
-	userController.registerUser(req.body).then(resultFromController => res.send(resultFromController)).catch(err => res.send(err))
+	userController.registerUser(req.body).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(400).send(`${req.body.email} is already been used`)
+		} else {
+			return res.status(201).send("Registered Successfully")
+		}
+	}).catch(err => res.send(err))
+});
+
+
+
+router.post("/login", (req, res) => {
+	userController.loginUser(req.body).then(resultFromController => res.send(resultFromController)).catch(err => res.send(err))
+});
+
+
+
+router.post("/:userId/sellersignup", (req, res) => {
+	if(req.params.isSeller){
+		return userController.registerAsSeller(req.params, req.body).then(resultFromController => {
+			if(!resultFromController){
+				return res.status(400).send("Store Name is already been use. try another one");
+			} else {
+				res.status(201).send("Hurray! you can now sell your products on our website")
+			}
+		})
+	} else {
+		return res.status(400).send("user is already registered as seller");
+	}
 });
 
 //=================== End of Router =================//
