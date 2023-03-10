@@ -28,6 +28,7 @@ db.once("open", () => console.log("MongoDB Atlas is now running and connected"))
 app.use(express.json());
 app.use(express.urlencoded({extend: true}));
 app.use("/user", userRoute);
+app.use("/sellerCenter", sellerRoute);
 app.use("/admin", adminRoute);
 
 //==============================================//

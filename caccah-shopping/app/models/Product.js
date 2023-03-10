@@ -12,8 +12,10 @@ const productSchema = new mongoose.Schema({
 		required: [true, "Product Description is required"]
 	},
 	images: [{
-		type: String,
-		required: true
+		image: {
+			type: String,
+			required: true
+		}
 	}],
 	category: {
 		type: String,
@@ -21,9 +23,13 @@ const productSchema = new mongoose.Schema({
 	},
 	brand: {
 		type: String,
-		default: "None"
+		required: [true, "product brand is required"]
 	},
-	Seller: {
+	stock: {
+		type: Number,
+		default: 1
+	},
+	seller: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Seller"
 	},

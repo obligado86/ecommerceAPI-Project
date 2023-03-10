@@ -1,19 +1,19 @@
 //================ Dependencies =================//
 
 const jwt = require("jsonwebtoken");
-const secretKey = "lksbhadgnlk13asbvgufan562ofnakjlsfbiapuhjfnoeihf";
+const secret = "lksbhadgnlk13asbvguf";
 
 //================== Modules ====================//
 
 //create token
 module.exports.createAccessToken = (user) => {
-	const data ={
+	const data = {
 		id: user._id,
 		email: user.email,
 		isAdmin: user.isAdmin,
 		isSeller: user.isSeller
 	};
-	return jwt.sign(data, secretKey, {});
+	return jwt.sign(data, secret, {});
 };
 
 // verify user
@@ -22,15 +22,15 @@ module.exports.verify = (req, res, next) => {
 	if(typeof token !== "undefined"){
 		console.log(token);
 		token = token.slice(7, token.length);
-		return jwt.verify(token, secretKey, (err, data) => {
+		return jwt.verify(token, secret, (err, data) => {
 			if(err) {
-				return res.status(400).send({auth: "failed"});
+				return false;
 			} else {
 				next();
 			}
 		})
 	} else {
-		return res.status(400).send({auth: "failed"});
+		return false;
 	}
 };
 
@@ -39,7 +39,7 @@ module.exports.verify = (req, res, next) => {
 module.exports.decode = (token) => {
 	if(typeof token !== "undefined"){
 		token = token.slice(7, token.length);
-		return jwt.verify(token, secretKey, (err, data) => {
+		return jwt.verify(token, secret, (err, data) => {
 			if(err) {
 				return null;
 			} else {

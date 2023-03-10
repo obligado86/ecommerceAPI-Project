@@ -68,6 +68,13 @@ const userSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	seller: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Seller",
+		required: function() {
+			return this.isSeller === true;
+		}
+	}
 });
 
 //============== End of Schema ===============//

@@ -45,9 +45,11 @@ module.exports.loginUser = (reqBody) => {
 };
 
 module.exports.registerAsSeller = (reqParams, reqBody) => {
-	return Seller.findOne({storeName: reqBody.storeName}).then(result => {
+	const findQuery = {storeName: {$regex: reqBody.storeName, $options: '$i'}}
+	return Seller.findOne(findQuery).then(result => {
 		if(!result){
 			let newSeller = new Seller({
+				user: reqParams.userId,
 				storeName: reqBody.storeName,
 				storeDescription: reqBody.storeDescription,
 				storeAddress: [{
@@ -57,12 +59,14 @@ module.exports.registerAsSeller = (reqParams, reqBody) => {
 					city: reqBody.city,
 					region: reqBody.region,
 					zipCode: reqBody.zipCode
-				}]
+				}],
+				products: []
 			});
-			let updateSeller = {
-				isSeller: true
+			let updateUser = {
+				isSeller: true,
+				seller: newSeller
 			}
-			return newSeller.save() && User.findByIdAndUpdate(reqParams.userId, updateSeller).then(result => true).catch(err => err);
+			return User.findByIdAndUpdate(reqParams.userId, updateUser).then(update => update).catch(err => err) && newSeller.save().then(saved => true).catch(err => err);
 		} else {
 			return false;
 		}
