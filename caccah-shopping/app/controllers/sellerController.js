@@ -35,9 +35,10 @@ module.exports.addProduct = async (reqParams, reqBody) => {
 			category: reqBody.category,
 			brand: reqBody.brand,
 			stock: reqBody.stock,
+			price: reqBody.price,
 			seller: reqParams.id
 		});
-	const sellerProduct = await Seller.findById(reqParams.id);
+	const sellerProduct = await Seller.findById(reqParams);
 		if(!sellerProduct){
 			return false;
 		} 

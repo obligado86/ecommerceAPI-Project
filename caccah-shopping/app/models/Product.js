@@ -29,13 +29,19 @@ const productSchema = new mongoose.Schema({
 		type: Number,
 		default: 1
 	},
+	price: {
+		type: Number,
+		required: true
+	},
 	seller: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Seller"
 	},
 	isActive: {
 		type: Boolean,
-		default: true
+		default: function() {
+			return this.stock > 0;
+		}
 	},
 	createdOn: {
 		type: Date,

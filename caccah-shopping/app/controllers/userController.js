@@ -3,6 +3,7 @@
 const User = require("../models/User");
 const Order = require("../models/Order");
 const Seller = require("../models/Seller");
+const Product = require("../models/Product");
 
 //================== Dependencies =====================//
 
@@ -19,7 +20,8 @@ module.exports.registerUser = (reqBody) => {
 			lastName: reqBody.lastName,
 			email: reqBody.email,
 			password: bcrypt.hashSync(reqBody.password, 10),
-			mobileNumber: reqBody.mobileNumber
+			mobileNumber: reqBody.mobileNumber,
+			cart: []
 			});
 			return newUser.save().then(user => true);
 		} else {
@@ -72,5 +74,68 @@ module.exports.registerAsSeller = (reqParams, reqBody) => {
 		}
 	});
 };
+
+module.exports.browseAllProduct = () => {
+	return Product.find({}).then(result => {
+		return result;
+	}).catch(err => err);
+};
+
+module.exports.addProductCart = (reqParams, reqBody) => {
+	return Product.findById(reqBody).then(product => {
+		console.log(product.isActive);
+		if(!product.isActive){
+			return false;
+		} else {
+			return User.findById(reqParams).then(result => {
+				result.cart.push({product})
+				return result.save().then(added => true);
+			})
+		}
+	}).catch(err => err)
+}
+
+/*module.exports.checkOut = async (reqParams, reqBody) => {
+	const items = []
+	const newOrder = new Order({
+		user: reqParams.id,
+		products: [{
+			product: product.id,
+			seller: product.seller
+		}]
+	})
+
+	let userCart = await User.findById(reqParams).then(user => {
+		const items = user.cart;
+		for(let i = 0; i < items.length; i++) {
+			const item = items[i];
+			const productId = item._id;
+			const sellerId = item.seller;
+			const price = item.price
+			const 
+
+		}
+	})
+	let checkOutProduct = await Product.findManyById(items).then(products => {
+			let productInfo = {
+
+			}
+		})
+	return User.findOneById(reqParams).then(result => {
+		if(result.cart === 0){
+			return false;
+		} else {
+			const addUserAddress = {
+				houseNoUnitNo: reqBody.houseNoUnitNo,
+				street: reqBody.street,
+				town: reqBody.town,
+				city: reqBody.city,
+				region: reqBody.region,
+				zipCode: reqBody.zipCode
+			};
+			return 
+		}
+	})
+}*/
 
 //================ End of Modules ==================//

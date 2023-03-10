@@ -24,6 +24,7 @@ router.put("/:id", auth.verify, (req, res) => {
 
 router.post("/:id/newproduct", auth.verify, (req, res) => {
 	const userData = auth.decode(req.headers.authorization);
+	console.log(userData.isSeller)
 	if(userData.isSeller){
 		sellerController.addProduct(req.params, req.body).then(resultFromController => {
 			if(!resultFromController){
