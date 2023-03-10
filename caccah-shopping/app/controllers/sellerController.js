@@ -24,30 +24,27 @@ module.exports.updateStoreName = (reqParams, reqBody) => {
 	})
 };
 
-module.exports.addProduct = async (reqParams, reqBody) => {
-	try {
-		const newProduct = new Product({
-			name: reqBody.name,
-			description: reqBody.description,
-			images: [{
-				image: reqBody.image
-			}],
-			category: reqBody.category,
-			brand: reqBody.brand,
-			stock: reqBody.stock,
-			price: reqBody.price,
-			seller: reqParams.id
-		});
-	const sellerProduct = await Seller.findById(reqParams);
-		if(!sellerProduct){
+module.exports.addProduct = (reqParams, reqBody) => {
+	const newProduct = new Product({
+		name: reqBody.name,
+		description: reqBody.description,
+		images: [{
+			image: reqBody.image
+		}],
+		category: reqBody.category,
+		brand: reqBody.brand,
+		stock: reqBody.stock,
+		price: reqBody.price,
+		seller: reqParams.id
+	});
+	return Seller.findById(reqParams.id).then(result => {
+		if(!result){
 			return false;
-		} 
-		sellerProduct.products.push(newProduct);
-		await Promise.all([sellerProduct.save(), newProduct.save()]);
-		return true;
-	} catch (err) {
-		return false;
-	}
+		} else {
+			let sellerProduct = result.products.push({newProduct});
+			return sellerProduct.save() && newProduct.save();
+		}
+	}).then(save => true).catch(err => err);
 }
 
 //================ End of Modules ==================//

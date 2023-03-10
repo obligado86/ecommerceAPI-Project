@@ -95,47 +95,43 @@ module.exports.addProductCart = (reqParams, reqBody) => {
 	}).catch(err => err)
 }
 
-/*module.exports.checkOut = async (reqParams, reqBody) => {
-	const items = []
-	const newOrder = new Order({
-		user: reqParams.id,
-		products: [{
-			product: product.id,
-			seller: product.seller
-		}]
-	})
+module.exports.checkOut = async (reqParams, reqBody) => {
+	const { shippinAddress } = reqBody;
+	const userId = reqParams;
+	const user = await User.findById(userId);
+	if(!user.cart) {
+		return false;
+	} else {
+		const userCart = user.cart;
+		let totalItemPrice = 0;
+		let orders = [];
 
-	let userCart = await User.findById(reqParams).then(user => {
-		const items = user.cart;
-		for(let i = 0; i < items.length; i++) {
-			const item = items[i];
-			const productId = item._id;
-			const sellerId = item.seller;
-			const price = item.price
-			const 
-
-		}
-	})
-	let checkOutProduct = await Product.findManyById(items).then(products => {
-			let productInfo = {
-
-			}
-		})
-	return User.findOneById(reqParams).then(result => {
-		if(result.cart === 0){
-			return false;
+		for(let i = 0; i < userCart.length; i++) {
+			const item = userCart[i];
+			totalItemPrice += item.Price;
+			const newOrder = new Order({
+				user: userId,
+				products: [{
+					product: item._id,
+					seller: items.seller,
+					quantity: 1,
+					price: items.price
+				}],
+				total: totalItemPrice
+			});
+			const saveOrder = await newOrder.save();
+			orders.push(saveOrder);
+		};
+		if(!user.address){
+			user.address.push(shippinAddress);
+			user.orders.push(...orders);
 		} else {
-			const addUserAddress = {
-				houseNoUnitNo: reqBody.houseNoUnitNo,
-				street: reqBody.street,
-				town: reqBody.town,
-				city: reqBody.city,
-				region: reqBody.region,
-				zipCode: reqBody.zipCode
-			};
-			return 
+			user.order.push(...orders);
 		}
-	})
-}*/
+		user.cart = [];
+		await user.save().then(saved => true).catch(err => err);
+	}
+}
+
 
 //================ End of Modules ==================//

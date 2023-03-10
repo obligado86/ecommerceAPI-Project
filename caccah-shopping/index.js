@@ -16,7 +16,7 @@ const orderRoute = require("./app/routes/orderRoute");
 
 const app = express();
 const db = mongoose.connection;
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 4000;
 
 //===================== App =====================//
 

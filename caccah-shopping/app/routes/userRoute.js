@@ -58,7 +58,7 @@ router.put("/:userId", auth.verify, (req, res) => {
 	}
 })
 
-router.post("/userId/checkout", auth.verify, (req, res) => {
+router.post("/:userId/checkout", auth.verify, (req, res) => {
 	const userAuth = auth.decode(req.headers.authorization);
 	if(!userAuth.id){
 		res.status(400).send("must login to your account first")
