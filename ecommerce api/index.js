@@ -8,8 +8,6 @@ const cors = require("cors");
 
 const adminRoute = require("./routes/adminRoute");
 const userRoute = require("./routes/userRoute");
-const productRoute = require("./routes/productRoute");
-const orderRoute = require("./routes/orderRoute");
 
 //================== Connection =================//
 
@@ -26,7 +24,7 @@ mongoose.connect("mongodb+srv://admin:admin123@batch-253-josephobligad.yq72isf.m
 db.once("open", () => console.log("MongoDB Atlas is now running and connected"));
 app.use(express.json());
 app.use(express.urlencoded({extend: true}));
-app.use("/user", userRoute);
+app.use("/", userRoute);
 app.use("/admin", adminRoute);
 
 //==============================================//

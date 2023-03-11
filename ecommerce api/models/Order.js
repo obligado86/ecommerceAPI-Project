@@ -3,26 +3,29 @@ const mongoose = require("mongoose");
 //================= Schema ==================//
 
 const orderSchema = new mongoose.Schema({
-	user: {
+	userId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User"
 	},
 	products: [{
-		product: {
+		productId: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Product",
+			ref: "Product"
+		},
+		productName: {
+			type: String,
+			required: true
+		},
+		productPrice: {
+			type: Number,
 			required: true
 		},
 		quantity: {
 			type: Number,
 			required: true
-		},
-		price: {
-			type: Number,
-			required: true
 		}
 	}],
-	total: {
+	totalAmount: {
 		type: Number,
 		required: true
 	},
@@ -31,7 +34,7 @@ const orderSchema = new mongoose.Schema({
 		enum: ["pending", "processsing", "shipped out", "delivered", "returned", "canceled"],
 		default: "pending"
 	},
-	createdOn: {
+	purchaseOn: {
 		type: Date,
 		default: new Date()
 	}

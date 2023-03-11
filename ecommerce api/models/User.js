@@ -54,33 +54,73 @@ const userSchema = new mongoose.Schema({
 	],
 	isActive: {
 		type: Boolean,
-		default: false
+		default: true
 	},
 	cart: [{
-		product: {
+		productId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Product"
+		},
+		productName: {
+			type: String,
+			required: true
+		},
+		quantity: {
+			type: Number,
+			required: true
+		},
+		price: {
+			type: Number,
+			required: true
 		}
 	}],
 	orders: [{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Order"
+		orderId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Order"
+		},
+		products: [{
+			productId: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Product"
+			},
+			productName: {
+				type: String,
+				required: true
+			},
+			productPrice: {
+				type: Number,
+				required: true
+			},
+			quantity: {
+				type: Number,
+				required: true
+			},
+		}],
+		totalAmount: {
+			type: Number,
+			required: true
+		},
+		status: {
+			type: String,
+			enum: ["pending", "processsing", "shipped out", "delivered", "returned", "canceled"],
+			default: "pending"
+		},
+		purchaseOn: {
+			type: Date,
+			default: new Date()
+		}
 	}],
 	isAdmin: {
 		type: Boolean,
 		default: false
 	},
-	isSeller: {
-		type: Boolean,
-		default: false
-	},
-	seller: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Seller",
-		required: function() {
-			return this.isSeller === true;
+	products: [{
+		product: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Product"
 		}
-	}
+	}]
 });
 
 //============== End of Schema ===============//
