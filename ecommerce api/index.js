@@ -6,11 +6,10 @@ const cors = require("cors");
 
 //=================== Routers ===================//
 
-const adminRoute = require("./app/routes/adminRoute");
-const userRoute = require("./app/routes/userRoute");
-const sellerRoute = require("./app/routes/sellerRoute");
-const productRoute = require("./app/routes/productRoute");
-const orderRoute = require("./app/routes/orderRoute");
+const adminRoute = require("./routes/adminRoute");
+const userRoute = require("./routes/userRoute");
+const productRoute = require("./routes/productRoute");
+const orderRoute = require("./routes/orderRoute");
 
 //================== Connection =================//
 
@@ -20,7 +19,7 @@ const port = process.env.PORT || 4000;
 
 //===================== App =====================//
 
-mongoose.connect("mongodb+srv://admin:admin123@batch-253-josephobligad.yq72isf.mongodb.net/caccahShopping?retryWrites=true&w=majority", {
+mongoose.connect("mongodb+srv://admin:admin123@batch-253-josephobligad.yq72isf.mongodb.net/ecommerceAPI?retryWrites=true&w=majority", {
 	useNewUrlParser: true,
 	useUnifiedTopology: true
 });
@@ -28,7 +27,6 @@ db.once("open", () => console.log("MongoDB Atlas is now running and connected"))
 app.use(express.json());
 app.use(express.urlencoded({extend: true}));
 app.use("/user", userRoute);
-app.use("/sellerCenter", sellerRoute);
 app.use("/admin", adminRoute);
 
 //==============================================//

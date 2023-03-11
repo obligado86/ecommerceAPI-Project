@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 //================= Schema ==================//
 
 const adminSchema = new mongoose.Schema({
-	user: {
+	Adminuser: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User"
 	},
@@ -20,6 +20,10 @@ const adminSchema = new mongoose.Schema({
 			type: Boolean,
 			default: false
 		}
+	}],
+	products: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Product"
 	}]
 });
 

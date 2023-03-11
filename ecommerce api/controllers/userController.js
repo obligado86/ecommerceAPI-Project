@@ -28,7 +28,6 @@ module.exports.registerUser = (reqBody) => {
 			false;
 		}
 	}).catch(err => err);
-	
 }
 
 module.exports.loginUser = (reqBody) => {
@@ -46,7 +45,7 @@ module.exports.loginUser = (reqBody) => {
 	}).catch(err => err);
 };
 
-module.exports.registerAsSeller = (reqParams, reqBody) => {
+/*module.exports.registerAsSeller = (reqParams, reqBody) => {
 	const findQuery = {storeName: {$regex: reqBody.storeName, $options: '$i'}}
 	return Seller.findOne(findQuery).then(result => {
 		if(!result){
@@ -73,7 +72,7 @@ module.exports.registerAsSeller = (reqParams, reqBody) => {
 			return false;
 		}
 	});
-};
+};*/
 
 module.exports.browseAllProduct = () => {
 	return Product.find({}).then(result => {
@@ -113,7 +112,6 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 				user: userId,
 				products: [{
 					product: item._id,
-					seller: items.seller,
 					quantity: 1,
 					price: items.price
 				}],
