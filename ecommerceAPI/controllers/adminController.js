@@ -13,24 +13,24 @@ const bcrypt = require("bcrypt");
 
 // retrieve user details
 
-module.exports.getUserDetails = (user) => {
-	return User.findById(user.userid).then(result => {
+module.exports.getUserDetails = (reqParams) => {
+	return User.findById(reqParams.userId).then(result => {
 		result.password = "";
 		return result;
 	}).catch(err => err);
 }
 
-// retrive all orders
+// retrive user orders
 
-module.exports.getUserOrder = (user) => {
-	return User.findById(user.userid).then(result => {
+module.exports.getUserOrder = (reqParams) => {
+	return User.findById(reqParams.id).then(result => {
 		return result.orders;
 	})
 }
 
 // add products 
 
-module.exports.addProduct = (reqParams, reqBody) => {
+module.exports.addProduct = (reqBody) => {
 	const newProduct = new Product({
 		name: reqBody.name,
 		description: reqBody.description,
@@ -42,9 +42,7 @@ module.exports.addProduct = (reqParams, reqBody) => {
 		stock: reqBody.stock,
 		price: reqBody.price
 	});
-	return newProduct.save().then(product => {
-
-	}).catch(err => err);
+	return newProduct.save().then(product => true).catch(err => err);
 };
 
 // update product info
