@@ -59,8 +59,22 @@ module.exports.updateProduct = (reqParams, reqBody) => {
 		stock: reqBody.stock,
 		price: reqBody.price
 	};
-	return Product.findByIdAndUpdate(reqParams.productId, updateInfo).then(update => true).catch(err => err);
+	return Product.findByIdAndUpdate(reqParams.productId, updateInfo).then(update => update).catch(err => err);
 };
 
+// archive product 
+
+module.exports.archiveProduct = (reqParams) => {
+	let archiveProduct = {
+		isActive: false
+	};
+	return Product.findById(reqParams.productId).then(product => {
+		if(!product.isActive){
+			return false;
+		} else {
+			return Product.findByIdAndUpdate(reqParams.productId, archiveProduct).then(productUpdate => productUpdate).catch(err => err);
+		}
+	})
+};
 
 //================ End of Modules ==================//

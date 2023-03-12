@@ -158,6 +158,9 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 				const item = userCart[i];
 				totalItemPrice += (item.Price * item.quantity);
 				const itemProduct = await Product.findById(item.productId);
+				if(!itemProduct.isActive){
+					return false;
+				} else {
 				const newstock = (itemProduct.stock - item.quantity);
 				const newOrder = new Order({
 					user: userId,
@@ -183,16 +186,16 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 				userOrders.push(userOrder);
 				const stockupdate = {stocks: newstock}
 				await Product.findByIdAndUpdate(item.productId, stockupdate);
-			};
-			if(!user.address){
-				user.address = shippinAddress;
-				user.orders = userOrder;
-			} else {
-				user.orders = [...user.orders, ...userOrders];
 			}
-			user.cart = [];
-			const savedUser = await user.save();
-			return { success: true, user: savedUser };
+		};
+		if(!user.address){
+			user.address = shippinAddress;
+			user.orders = userOrder;
+		} else {
+			user.orders = [...user.orders, ...userOrders];
+		}
+		user.cart = [];
+		const savedUser = await user.save().then(() => true)
 		}	
 	} catch(Error){
 		console.log(Error);

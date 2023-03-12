@@ -28,9 +28,9 @@ router.post("/login", (req, res) => {
 router.get("/products/:productId", (req, res) => {
 	userController.viewProduct(req.params).then(resultFromController => {
 		if(!resultFromController){
-			res.status(400).send("no products found");
+			return res.status(400).send("no products found");
 		} else {
-			res.status(200).send(resultFromController);
+			return res.status(200).send(resultFromController);
 		}
 	}).catch(err => err);
 })
@@ -46,15 +46,15 @@ router.get("/products", (req, res) => {
 router.get("/:userId/myOrders", auth.verify, (req, res) => {
 	const userAuth = auth.decode(req.headers.authorization);
 	if(!userAuth.id){
-		res.status(404).send("must login to your account first")
+		return res.status(404).send("must login to your account first")
 	} else if (userAuth.isAdmin){
-		res.status(400).send("invalid request")
+		return res.status(400).send("invalid request")
 	} else {
 		userController.viewOrders({userId: userAuth.id}).then(resultFromController => {
 			if(!resultFromController){
-				res.status(400).send("no orders yet");
+				return res.status(400).send("no orders yet");
 			} else {
-				res.status(200).send(resultFromController);
+				return res.status(200).send(resultFromController);
 			}
 		});
 	}
@@ -65,7 +65,7 @@ router.get("/:userId/myOrders", auth.verify, (req, res) => {
 router.put("/products/:productId", auth.verify, (req, res) => {
 	const userAuth = auth.decode(req.headers.authorization);
 	if(!userAuth.id){
-		res.status(404).send("must login to your account first")
+		return res.status(404).send("must login to your account first")
 	} else {
 		return userController.addProductCart({userId: userAuth.id}, req.params, req.body).then(resultFromController => {
 			if(!resultFromController){
@@ -82,13 +82,13 @@ router.put("/products/:productId", auth.verify, (req, res) => {
 router.get("/:userId/mycart", auth.verify, (req, res) => {
 	const userAuth = auth.decode(req.headers.authorization);
 	if(!userAuth.id){
-		res.status(400).send("must login to your account first");
+		return res.status(400).send("must login to your account first");
 	} else {
 		return userController.viewCart(req.params).then(resultFromController => {
 			if(!resultFromController){
-				res.status(400).send("cart is empty");
+				return res.status(400).send("cart is empty");
 			} else {
-				res.status(200).send(resultFromController);
+				return res.status(200).send(resultFromController);
 			}
 		}).catch(err => err);
 	}
@@ -103,9 +103,9 @@ router.patch("/:userId/mycart", auth.verify, (req, res) => {
 	} else {
 		return userController.deleteCartItem(req.params, req.body).then(resultFromController => {
 			if(!resultFromController){
-				res.status(400).send("cart is empty");
+				return res.status(400).send("cart is empty");
 			} else {
-				res.status(200).send("item removed from cart");
+				return res.status(200).send("item removed from cart");
 			}
 		}).catch(err => err);
 	}
@@ -116,11 +116,11 @@ router.patch("/:userId/mycart", auth.verify, (req, res) => {
 router.post("/:userId/mycart/checkout", auth.verify, (req, res) => {
 	const userAuth = auth.decode(req.headers.authorization);
 	if(!userAuth.id){
-		res.status(400).send("must login to your account first")
+		return res.status(400).send("must login to your account first")
 	} else {
 		return userController.checkOut(req.params, req.body).then(resultFromController => {
 			if(!resultFromController){
-				return res.status(400).send(resultFromController);
+				return res.status(400).send("no item to checkout");
 			} else {
 				return res.status(200).send("Your order will be on process. Thank you for shopping with us");
 			}
@@ -133,7 +133,7 @@ router.post("/:userId/mycart/checkout", auth.verify, (req, res) => {
 router.patch("/:userId/setAsAdmin", auth.verify, (req, res) => {
 	const userAuth = auth.decode(req.headers.authorization);
 	if(userAuth.isAdmin){
-		res.status(400).send(false);
+		return res.status(400).send(false);
 	} else {
 		return userController.setAsAdmin(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => err)
 	}
