@@ -172,7 +172,7 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 					}],
 					total: totalItemPrice
 				});
-				const saveOrder = await newOrder.save();
+				await newOrder.save().then(order => true).catch(err => err);
 				const userOrder = {
 					orderId: saveOrder._id,
 					products: [{
@@ -189,13 +189,13 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 			}
 		};
 		if(!user.address){
-			user.address = shippinAddress;
-			user.orders = userOrder;
+			user.address.push(shippinAddress);
+			user.orders.push(userOrder);
 		} else {
-			user.orders = [...user.orders, ...userOrders];
+			user.orders.push(userOrder);
 		}
 		user.cart = [];
-		const savedUser = await user.save().then(() => true)
+		await user.save().then(savedUser => savedUser)
 		}	
 	} catch(Error){
 		console.log(Error);
@@ -208,7 +208,7 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 
 module.exports.setAsAdmin = (reqParams) => {
 	let setAdmin = {isAdmin: true};
-	return User.findByIdAndUpdate(reqParams.id, setAdmin).then(update => true).catch(err => err);
+	return User.findByIdAndUpdate(reqParams.userId, setAdmin).then(update => true).catch(err => err);
 };
 
 
