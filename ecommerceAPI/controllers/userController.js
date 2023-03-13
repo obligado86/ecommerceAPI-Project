@@ -172,31 +172,34 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 					}],
 					total: totalItemPrice
 				});
-				await newOrder.save().then(order => true).catch(err => err);
+				return newOrder.create().then(order => {
+				for(let j = 0; j < order.products.length; j++){
 				const userOrder = {
 					orderId: saveOrder._id,
 					products: [{
-						productId: saveOrder.products[0].productId,
-						productName: saveOrder.products[0].productName,
-						productPrice: saveOrder.products[0].price,
-						quantity: saveOrder.products[0].quantity
+						productId: order.products[j].productId,
+						productName: order.products[j].productName,
+						productPrice: order.products[j].price,
+						quantity: order.products[j].quantity
 					}],
-					totalAmount: saveOrder.total
-				};
+					totalAmount: order.total
+					};
+				}
 				userOrders.push(userOrder);
 				const stockupdate = {stocks: newstock}
-				await Product.findByIdAndUpdate(item.productId, stockupdate);
+				return Product.findByIdAndUpdate(item.productId, stockupdate).then(product => true);
+				});
 			}
-		};
-		if(!user.address){
-			user.address.push(shippinAddress);
-			user.orders.push(userOrder);
-		} else {
-			user.orders.push(userOrder);
 		}
-		user.cart = [];
-		await user.save().then(savedUser => savedUser)
-		}	
+	}
+	if(!user.address.length && user.address !== shippinAddress){
+		address.push(shippinAddress);
+		user.orders.push(userOrder);
+	} else {
+		user.orders.push(userOrder);
+	}
+	user.cart = [];
+	return user.save().then(savedUser => true);
 	} catch(Error){
 		console.log(Error);
 		return Error;

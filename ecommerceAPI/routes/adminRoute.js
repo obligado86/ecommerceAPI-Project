@@ -74,10 +74,26 @@ router.patch("/product/:productId/archive", auth.verify, (req, res) => {
 			}
 		}).catch(err => err);
 	} else {
-		return false;
+		return res.status(404).send(false);
 	}
 });
 
+// reactivate product
+
+router.patch("/product/:productId/activate", auth.verify, (req, res) => {
+	const adminVerify = auth.decode(req.headers.authorization).isAdmin;
+	if(adminVerify){
+		adminController.reactivateProduct(req.params).then(resultFromController => {
+			if(!resultFromController){
+				return res.status(400).send("Product is already active");
+			} else {
+				return res.status(204).send("activate product")
+			}
+		})
+	} else {
+		return res.status(404).send(false);
+	}
+})
 
 //=================== End of Router =================//
 

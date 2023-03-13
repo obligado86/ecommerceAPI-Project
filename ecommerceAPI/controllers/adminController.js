@@ -77,4 +77,19 @@ module.exports.archiveProduct = (reqParams) => {
 	})
 };
 
+// reactivaed product 
+
+module.exports.reactivateProduct = (reqParams) => {
+	let activateProduct = {
+		isActive: true
+	};
+	return Product.findById(reqParams.productId).then(product => {
+		if(product.isActive){
+			return false;
+		} else {
+			return Product.findByIdAndUpdate(reqParams.productId, activateProduct).then(productUpdate => productUpdate).catch(err => err);
+		}
+	})
+};
+
 //================ End of Modules ==================//
