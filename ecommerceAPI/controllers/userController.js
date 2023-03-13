@@ -128,7 +128,7 @@ module.exports.deleteCartItem = (reqParams, reqBody) => {
 				throw new Error("product not found in your cart");
 			}
 			const removeProduct = user.cart.splice(itemIndex, 1);
-			return user.save().then(() => removeProduct);
+			return user.save().then(() => true);
 		}
 	}).catch(err => err);
 };
@@ -136,8 +136,7 @@ module.exports.deleteCartItem = (reqParams, reqBody) => {
 // user Checkout
 
 module.exports.checkOut = async (reqParams, reqBody) => {
-	try {
-		const shippinAddress = {
+	const shippinAddress = {
 			houseNoUnitNo: reqBody.houseNoUnitNo,
 			street: reqBody.street,
 			town: reqBody.town,
@@ -145,67 +144,68 @@ module.exports.checkOut = async (reqParams, reqBody) => {
 			region: reqBody.region,
 			zipCode: reqBody.zipCode
 		}
-		const userId = reqParams.userId;
-		const user = await User.findById(userId);
-		if(!user.cart) {
+	const userId = reqParams.userId;
+	let userOrder = []
+
+	try {
+	const isOrderCreated = await User.findById(userId).then(user => {
+		const userCart = user.cart;
+		if(!userCart.length){
 			return false;
 		} else {
-			const userCart = user.cart;
 			let totalItemPrice = 0;
-			const userOrder = [];
-
-			for(let i = 0; i < userCart.length; i++) {
-				const item = userCart[i];
+			for(let i = 0; i < userCart.length; i++){
+				let item = userCart[i];
 				totalItemPrice += (item.Price * item.quantity);
-				const itemProduct = await Product.findById(item.productId);
-				if(!itemProduct.isActive){
-					return false;
-				} else {
-				const newstock = (itemProduct.stock - item.quantity);
-				const newOrder = new Order({
-					user: userId,
-					products: [{
-						productId: item.productId,
-						productName: item.productName,
-						quantity: item.quantity,
-						price: item.price
-					}],
-					total: totalItemPrice
-				});
-				return newOrder.create().then(order => {
-				for(let j = 0; j < order.products.length; j++){
-				const userOrder = {
-					orderId: saveOrder._id,
-					products: [{
-						productId: order.products[j].productId,
-						productName: order.products[j].productName,
-						productPrice: order.products[j].price,
-						quantity: order.products[j].quantity
-					}],
-					totalAmount: order.total
-					};
-				}
-				userOrders.push(userOrder);
-				const stockupdate = {stocks: newstock}
-				return Product.findByIdAndUpdate(item.productId, stockupdate).then(product => true);
-				});
-			}
-		}
-	}
-	if(!user.address.length && user.address !== shippinAddress){
-		address.push(shippinAddress);
-		user.orders.push(userOrder);
-	} else {
-		user.orders.push(userOrder);
-	}
-	user.cart = [];
-	return user.save().then(savedUser => true);
-	} catch(Error){
-		console.log(Error);
-		return Error;
-	}
+				const orderCreation = await Product.findById(item.productId._id).then(itemProduct => {
+					if(!itemProduct.isActive){
+						return false;
+					} else {
+						const newStock = (itemProduct.stock - item.quantity);
+						const stockUpdate = {stocks: newstock}
+						const stockUpdate = itemProduct
+						let newOrder = new Order([
+							user: userId,
+							products: [{
+								productId: item.productId._id,
+								productName: item.productName,
+								quantity: item.quantity,
+								price: item.price
+							}],
+							total: totalItemPrice
+						]);
+						return newOrder.save().then(order => {
+							for(let j = 0; j < order.products.length; j++){
+							const userOrder = {
+								orderId: order._id,
+								products: [{
+									productId: order.products[j].productId,
+									productName: order.products[j].productName,
+									productPrice: order.products[j].price,
+									quantity: order.products[j].quantity
+								}],
+								totalAmount: order.total
+								};
+							}
+							userOrders.push(userOrder);
+							return order.save().then(order => true)
+						});
+						const productStockUpdate = await Product.findByIdAndUpdate(item.productId._id, stockUpdate).then(itemProduct => true)
+					}
 
-};
+				})
+			}
+			if(!user.address.length && user.address !== shippinAddress){
+				address.push(shippinAddress);
+				user.orders.push(userOrder);
+			} else {
+			user.orders.push(userOrder);
+			}
+			user.cart = [];
+			return user.save().then(user => true);
+		}
+	})	
+}
 
 // set user as admin
 
