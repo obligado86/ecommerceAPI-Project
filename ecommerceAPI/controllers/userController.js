@@ -128,7 +128,7 @@ module.exports.deleteCartItem = (reqParams, reqBody) => {
 				throw new Error("product not found in your cart");
 			}
 			const removeProduct = user.cart.splice(itemIndex, 1);
-			return user.save().then(() => true);
+			return user.save().then(() => removeProduct);
 		}
 	}).catch(err => err);
 };
@@ -136,76 +136,68 @@ module.exports.deleteCartItem = (reqParams, reqBody) => {
 // user Checkout
 
 module.exports.checkOut = async (reqParams, reqBody) => {
-	const shippinAddress = {
-			houseNoUnitNo: reqBody.houseNoUnitNo,
-			street: reqBody.street,
-			town: reqBody.town,
-			city: reqBody.city,
-			region: reqBody.region,
-			zipCode: reqBody.zipCode
-		}
-	const userId = reqParams.userId;
-	let userOrder = []
+  try {
+    const shippingAddress = {
+      	houseNoUnitNo: reqBody.houseNoUnitNo,
+     	street: reqBody.street,
+      	town: reqBody.town,
+      	city: reqBody.city,
+      	region: reqBody.region,
+      	zipCode: reqBody.zipCode
+    };
+    const userId = reqParams.userId;
+    const user = await User.findById(userId);
+    if (!user.cart) {
+      	return false;
+    } else {
+      	const userCart = user.cart;
+      	let totalItemPrice = 0;
 
-	try {
-	const isOrderCreated = await User.findById(userId).then(user => {
-		const userCart = user.cart;
-		if(!userCart.length){
-			return false;
-		} else {
-			let totalItemPrice = 0;
-			for(let i = 0; i < userCart.length; i++){
-				let item = userCart[i];
-				totalItemPrice += (item.Price * item.quantity);
-				const orderCreation = await Product.findById(item.productId._id).then(itemProduct => {
-					if(!itemProduct.isActive){
-						return false;
-					} else {
-						const newStock = (itemProduct.stock - item.quantity);
-						const stockUpdate = {stocks: newstock}
-						const stockUpdate = itemProduct
-						let newOrder = new Order([
-							user: userId,
-							products: [{
-								productId: item.productId._id,
-								productName: item.productName,
-								quantity: item.quantity,
-								price: item.price
-							}],
-							total: totalItemPrice
-						]);
-						return newOrder.save().then(order => {
-							for(let j = 0; j < order.products.length; j++){
-							const userOrder = {
-								orderId: order._id,
-								products: [{
-									productId: order.products[j].productId,
-									productName: order.products[j].productName,
-									productPrice: order.products[j].price,
-									quantity: order.products[j].quantity
-								}],
-								totalAmount: order.total
-								};
-							}
-							userOrders.push(userOrder);
-							return order.save().then(order => true)
-						});
-						const productStockUpdate = await Product.findByIdAndUpdate(item.productId._id, stockUpdate).then(itemProduct => true)
-					}
+      	for (let i = 0; i < userCart.length; i++) {
+        	const item = userCart[i];
+        	totalItemPrice += item.price * item.quantity;
+        	const itemProduct = await Product.findById(item.productId);
+        	if (!itemProduct.isActive) {
+          	return false;
+        	} else {
+          		const newStock = itemProduct.stock - item.quantity;
+         		const newOrder = new Order({
+           			user: userId,
+            		products: [{
+                		productId: item.productId,
+                		productName: item.productName,
+                		productPrice: item.price,
+                		quantity: item.quantity
+              		}],
+           			totalAmount: totalItemPrice
+          		});
+          		const userOrder = {
+              		orderId: newOrder._id,
+              		products: [{
+                  		productId: item.productId,
+                  		productName: item.productName,
+                  		productPrice: item.price,
+                  		quantity: item.quantity
+                	}],
+              		totalAmount: item.total
+            	};
+            	user.orders.push(userOrder);
+          		const stockUpdate = { stock: newStock };
+          		return Product.findByIdAndUpdate(item.productId, stockUpdate).then(order => true).catch(err => err) && newOrder.save().then(itemProduct => true).catch(err => err);
+        		}
+      		}
+    	}
+    	if (!user.address.length || user.address.includes(shippingAddress)) {
+      		user.address.push(shippingAddress);
+    	} 
+   		user.cart = [];
+   		return user.save().then(user => true).catch(err => err);
+  		} catch (error) {
+   		console.log(error);
+    	return error;
+  	}
+};
 
-				})
-			}
-			if(!user.address.length && user.address !== shippinAddress){
-				address.push(shippinAddress);
-				user.orders.push(userOrder);
-			} else {
-			user.orders.push(userOrder);
-			}
-			user.cart = [];
-			return user.save().then(user => true);
-		}
-	})	
-}
 
 // set user as admin
 
