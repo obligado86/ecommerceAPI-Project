@@ -117,87 +117,81 @@ module.exports.viewCart = (reqParams) => {
 // delete items from cart
 
 module.exports.deleteCartItem = (reqParams, reqBody) => {
-	const reqProductId = {id: reqBody.id}
-	console.log(reqParams.userId)
-	return User.findById(reqParams.userId).then(user => {
-		if(!user){
-			return false;
-		} else {
-			const itemIndex = user.cart.findIndex((product) => productId.toString() === reqProductId.id);
-			if(itemIndex === -1){
-				throw new Error("product not found in your cart");
+	return User.findById(reqParams.userId).then((user) => {
+		const itemIndex = user.cart.findIndex((item) => item.productId.toString() === reqBody.productId);
+		if(itemIndex >= 0){
+				user.cart.splice(itemIndex, 1);
+				return user.save().then(() => true);
+			} else {
+				return false;
 			}
-			const removeProduct = user.cart.splice(itemIndex, 1);
-			return user.save().then(() => removeProduct);
-		}
-	}).catch(err => err);
+	}).catch(err => console.log(err));
 };
 
 // user Checkout
 
-module.exports.checkOut = async (reqParams, reqBody) => {
-  try {
-    const shippingAddress = {
-      	houseNoUnitNo: reqBody.houseNoUnitNo,
-     	street: reqBody.street,
-      	town: reqBody.town,
-      	city: reqBody.city,
-      	region: reqBody.region,
-      	zipCode: reqBody.zipCode
-    };
-    const userId = reqParams.userId;
-    const user = await User.findById(userId);
-    if (!user.cart) {
-      	return false;
-    } else {
-      	const userCart = user.cart;
-      	let totalItemPrice = 0;
-
-      	for (let i = 0; i < userCart.length; i++) {
-        	const item = userCart[i];
-        	totalItemPrice += item.price * item.quantity;
-        	const itemProduct = await Product.findById(item.productId);
-        	if (!itemProduct.isActive) {
-          	return false;
-        	} else {
-          		const newStock = itemProduct.stock - item.quantity;
-         		const newOrder = new Order({
-           			user: userId,
-            		products: [{
-                		productId: item.productId,
-                		productName: item.productName,
-                		productPrice: item.price,
-                		quantity: item.quantity
-              		}],
-           			totalAmount: totalItemPrice
-          		});
-          		const userOrder = {
-              		orderId: newOrder._id,
-              		products: [{
-                  		productId: item.productId,
-                  		productName: item.productName,
-                  		productPrice: item.price,
-                  		quantity: item.quantity
-                	}],
-              		totalAmount: item.total
-            	};
-            	user.orders.push(userOrder);
-          		const stockUpdate = { stock: newStock };
-          		return Product.findByIdAndUpdate(item.productId, stockUpdate).then(order => true).catch(err => err) && newOrder.save().then(itemProduct => true).catch(err => err);
-        		}
-      		}
-    	}
-    	if (!user.address.length || user.address.includes(shippingAddress)) {
-      		user.address.push(shippingAddress);
-    	} 
-   		user.cart = [];
-   		return user.save().then(user => true).catch(err => err);
-  		} catch (error) {
-   		console.log(error);
-    	return error;
-  	}
-};
-
+module.exports.checkOut = (reqParams, reqBody) => {
+	const shippingAddress = {
+			houseNoUnitNo: reqBody.houseNoUnitNo,
+			street: reqBody.street,
+			town: reqBody.town,
+			city: reqBody.city,
+			region: reqBody.region,
+			zipCode: reqBody.zipCode
+		}
+	const userId = reqParams.userId;
+	return User.findById(userId).then((user) => {
+		if(!user.cart){
+			return false;
+		} else {
+			const userCart = user.cart;
+			let totalItemPrice = 0;
+			for(let i = 0; i < userCart.length; i++) {
+				const item = userCart[i];
+				totalItemPrice += item.price * item.quantity;
+				return Product.findById(item.productId).then((itemProduct) => {
+					if(!itemProduct.isActive && itemProduct.stock < item.quantity){
+						return false;
+					} else {
+						const newstock = (itemProduct.stock - item.quantity);
+						const newOrder = new Order({
+							userId: userId,
+							products: [{
+								productId: item.productId,
+								productName: item.productName,
+								productPrice: item.price,
+								quantity: item.quantity
+							}],
+							totalAmount: totalItemPrice
+						});
+						itemProduct.stock = newstock;
+						return itemProduct.save() && newOrder.save().then((order) => {
+							const userOrder = {
+								orderId: order._id,
+								products: [{
+									productId: order.products[0].productId,
+									productName: order.products[0].productName,
+									productPrice: order.products[0].productPrice,
+									quantity: order.products[0].quantity
+								}],
+								totalAmount: order.totalAmount
+							};
+							if(!user.address.length || user.address !== shippingAddress){
+								user.address.push(shippingAddress);
+								user.orders.push(userOrder);
+							} else {
+								user.order.push(userOrder);
+							}
+							user.cart = [];
+							return user.save().then(() => true)
+						})
+					}
+				}).catch(err => console.log(err))
+			}
+				
+		}
+	})
+}
 
 // set user as admin
 
