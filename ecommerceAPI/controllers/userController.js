@@ -87,7 +87,7 @@ module.exports.addProductCart = (user, reqParams, reqBody) => {
 			quantity: reqQuantity.quantity,
 			price: product.price
 		};
-		if(!product.isActive){
+		if(!product.isActive || product.stock <= 0 && product.stock < reqQuantity.quantity){
 			return false;
 		} else {
 			return User.findById(user.userId).then(user => {
@@ -176,11 +176,11 @@ module.exports.checkOut = (reqParams, reqBody) => {
 								}],
 								totalAmount: order.totalAmount
 							};
-							if(!user.address.length || user.address !== shippingAddress){
+							if(user.address.length < 0 && !user.address.includes(shippingAddress)){
 								user.address.push(shippingAddress);
 								user.orders.push(userOrder);
 							} else {
-								user.order.push(userOrder);
+								user.orders.push(userOrder);
 							}
 							user.cart = [];
 							return user.save().then(() => true)
