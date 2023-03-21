@@ -87,7 +87,7 @@ module.exports.addProductCart = (user, reqParams, reqBody) => {
 			quantity: reqQuantity.quantity,
 			price: product.price
 		};
-		if(!product.isActive || product.stock <= 0 && product.stock < reqQuantity.quantity){
+		if(!product.isActive && product.stock <= 0 && product.stock < reqQuantity.quantity){
 			return false;
 		} else {
 			return User.findById(user.userId).then(user => {
