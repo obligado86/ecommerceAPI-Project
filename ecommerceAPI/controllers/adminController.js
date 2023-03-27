@@ -20,11 +20,11 @@ module.exports.getUserDetails = (reqParams) => {
 	}).catch(err => err);
 }
 
-// retrive user orders
+// retrive all orders
 
-module.exports.getUserOrder = (reqParams) => {
-	return User.findById(reqParams.id).then(result => {
-		return result.orders;
+module.exports.getUserOrder = () => {
+	return Order.find({}).then(result => {
+		return result;
 	})
 }
 
@@ -42,7 +42,7 @@ module.exports.addProduct = (reqBody) => {
 		stock: reqBody.stock,
 		price: reqBody.price
 	});
-	return newProduct.save().then(product => true).catch(err => err);
+	return newProduct.save().then(product => true).catch(err => false);
 };
 
 // update product info

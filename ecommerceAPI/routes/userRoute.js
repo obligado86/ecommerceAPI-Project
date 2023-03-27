@@ -10,9 +10,9 @@ const auth = require("../auth");
 router.post("/signup", (req, res) => {
 	userController.registerUser(req.body).then(resultFromController => {
 		if(!resultFromController){
-			return res.status(400).send(`${req.body.email} is already been used`);
+			return res.status(400).send(false);
 		} else {
-			return res.status(201).send("Registered Successfully");
+			return res.status(201).send(true);
 		}
 	}).catch(err => res.send(err));
 });
@@ -25,20 +25,63 @@ router.post("/login", (req, res) => {
 
 // view single product
 
-router.get("/products/:productId", (req, res) => {
+router.get("/collection/:productId", (req, res) => {
 	userController.viewProduct(req.params).then(resultFromController => {
 		if(!resultFromController){
-			return res.status(400).send("no products found");
+			return res.status(400).send(false);
 		} else {
 			return res.status(200).send(resultFromController);
 		}
 	}).catch(err => err);
 })
 
+
+
+// user details
+router.get("/details", (req, res) => {
+	const userData = auth.decode(req.headers.authorization);
+	userController.getProfile({userId: userData.id}).then(resultFromController => res.send(resultFromController)).catch(err => res.send(err))
+});
+
+// user porfile
+router.get("/:userId/profile", (req, res) => {
+	userController.userProfile(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => console.log(err))
+})
+
+//see user pending order
+
+router.get("/:userId/order", (req, res) => {
+	userController.seeUserOrder(req.params).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
+});
+
+//see products on orders
+
+router.get('/:userId/order/products', (req, res) => {
+	userController.seeProductsOrders(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => console.log(err));
+})
+
 // see all product list
 
-router.get("/products", (req, res) => {
+router.get("/collection", (req, res) => {
 	userController.browseAllProduct().then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
+});
+
+// see products by category
+
+router.get("/collection/category", (req, res) => {
+	userController.browseByCategory(req.body).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
+});
+
+// see products by name
+
+router.get("/collection/search", (req, res) => {
+	userController.search(req.body).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
+});
+
+// see user address
+
+router.get("/:userId/address", (req, res) => {
+	userController.findAddress(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
 });
 
 // retrieve all orders
@@ -46,13 +89,13 @@ router.get("/products", (req, res) => {
 router.get("/:userId/myOrders", auth.verify, (req, res) => {
 	const userAuth = auth.decode(req.headers.authorization);
 	if(!userAuth.id){
-		return res.status(404).send("must login to your account first")
+		return res.status(404).send(false)
 	} else if (userAuth.isAdmin){
-		return res.status(400).send("invalid request")
+		return res.status(400).send(false)
 	} else {
 		userController.viewOrders({userId: userAuth.id}).then(resultFromController => {
 			if(!resultFromController){
-				return res.status(400).send("no orders yet");
+				return res.status(400).send(false);
 			} else {
 				return res.status(200).send(resultFromController);
 			}
@@ -62,70 +105,52 @@ router.get("/:userId/myOrders", auth.verify, (req, res) => {
 
 // add to cart
 
-router.put("/products/:productId", auth.verify, (req, res) => {
-	const userAuth = auth.decode(req.headers.authorization);
-	if(!userAuth.id){
-		return res.status(404).send("must login to your account first")
-	} else {
-		return userController.addProductCart({userId: userAuth.id}, req.params, req.body).then(resultFromController => {
-			if(!resultFromController){
-				return res.status(400).send("Product is out of Stock");
-			} else {
-				return res.status(201).send("add item to your cart");
-			}
-		}).catch(err => err);
-	}
+router.put("/collection/:productId", auth.verify, (req, res) => {
+	let data = {userId: auth.decode(req.headers.authorization).id}
+	userController.addProductCart(data, req.params, req.body).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(400).send(false);
+		} else {
+			return res.status(201).send(resultFromController);
+		}
+	}).catch(err => err);
 });
 
 // view cart items
 
-router.get("/:userId/mycart", auth.verify, (req, res) => {
-	const userAuth = auth.decode(req.headers.authorization);
-	if(!userAuth.id){
-		return res.status(400).send("must login to your account first");
-	} else {
-		return userController.viewCart(req.params).then(resultFromController => {
-			if(!resultFromController){
-				return res.status(400).send("cart is empty");
-			} else {
-				return res.status(200).send(resultFromController);
-			}
-		}).catch(err => err);
-	}
+router.get("/:userId/mycart", (req, res) => {
+	userController.viewCart(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(400).send(false);
+		} else {
+			return res.status(200).send(resultFromController);
+		}
+	}).catch(err => err);
+
 });
 
 // delete items from cart
 
-router.patch("/:userId/mycart", auth.verify, (req, res) => {
-	const userAuth = auth.decode(req.headers.authorization);
-	if(!userAuth.id){
-		res.status(400).send("must login to your account first");
-	} else {
-		return userController.deleteCartItem(req.params, req.body).then(resultFromController => {
-			if(!resultFromController){
-				return res.status(400).send("cart is empty");
-			} else {
-				return res.status(200).send("item removed from cart");
-			}
-		}).catch(err => err);
-	}
-})
+router.patch("/:userId/mycart", (req, res) => {
+	userController.deleteCartItem(req.params, req.body).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(400).send(false);
+		} else {
+			return res.status(200).send(true);
+		}
+	}).catch(err => err);
+});
 
 // user checkout
 
-router.post("/:userId/mycart/checkout", auth.verify, (req, res) => {
-	const userAuth = auth.decode(req.headers.authorization);
-	if(!userAuth.id){
-		return res.status(400).send("must login to your account first")
-	} else {
-		return userController.checkOut(req.params, req.body).then(resultFromController => {
-			if(!resultFromController){
-				return res.status(400).send("no item to checkout");
-			} else {
-				return res.status(200).send("Your order will be on process. Thank you for shopping with us");
-			}
-		}).catch(err => err);
-	}
+router.post("/:userId/mycart/checkout", (req, res) => {
+	userController.checkOut(req.params, req.body).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(400).send(false);
+		} else {
+			return res.status(200).send(true);
+		}
+	}).catch(err => err);
 });
 
 // set admin user

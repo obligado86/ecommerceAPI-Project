@@ -4,11 +4,15 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
 	
+	profilePic: {
+		type: String,
+		default: "https://cdn.shopify.com/s/files/1/0656/4111/9963/files/de7834s-6515bd40-8b2c-4dc6-a843-5ac1a95a8b55.jpg?v=1679838690"
+	},
 	firstName: {
 		type: String,
 		required: [true, "First name is required"]
 	},
-	lastName : {
+	lastName: {
 		type: String,
 		required: [true, "Last name is required"]
 	},
@@ -57,6 +61,10 @@ const userSchema = new mongoose.Schema({
 		default: true
 	},
 	cart: [{
+		productImage: {
+			type: String,
+			default: ""
+		},
 		productId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Product"
@@ -84,6 +92,10 @@ const userSchema = new mongoose.Schema({
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Product"
 			},
+			productImage: {
+				type: String,
+				default: ""
+			},
 			productName: {
 				type: String,
 				required: true
@@ -97,9 +109,17 @@ const userSchema = new mongoose.Schema({
 				required: true
 			},
 		}],
+		shippingCost: {
+			type: Number,
+			default: 0
+		},
 		totalAmount: {
 			type: Number,
 			required: true
+		},
+		paymentMethod: {
+			type: String,
+			default: "Card"
 		},
 		status: {
 			type: String,

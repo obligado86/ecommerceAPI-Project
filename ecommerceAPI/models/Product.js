@@ -33,10 +33,6 @@ const productSchema = new mongoose.Schema({
 		type: Number,
 		required: true
 	},
-	seller: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Seller"
-	},
 	isActive: {
 		type: Boolean,
 		default: function() {
@@ -47,14 +43,20 @@ const productSchema = new mongoose.Schema({
 		type: Date,
 		default: new Date()
 	},
-	rating: [{
+	productRating: {
+		type: Number,
+		default: 0,
+		max: 5,
+		min: 0
+	},
+	reviews: [{
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User"
 		},
 		rating: {
 			type: Number,
-			required: true
+			default: 0
 		},
 		comment: {
 			type: String,

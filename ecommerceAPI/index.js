@@ -22,6 +22,7 @@ mongoose.connect("mongodb+srv://admin:admin123@batch-253-josephobligad.yq72isf.m
 	useUnifiedTopology: true
 });
 db.once("open", () => console.log("MongoDB Atlas is now running and connected"));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extend: true}));
 app.use("/", userRoute);

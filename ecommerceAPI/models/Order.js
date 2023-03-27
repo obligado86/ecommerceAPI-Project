@@ -14,6 +14,10 @@ const orderSchema = new mongoose.Schema({
 			ref: "Product",
 			required: true
 		},
+		productImage: {
+			type: String,
+			required: true
+		},
 		productName: {
 			type: String,
 			required: true
@@ -27,8 +31,16 @@ const orderSchema = new mongoose.Schema({
 			default: 1
 		}
 	}],
+	shippingCost: {
+		type: Number,
+		default: 0
+	},
 	totalAmount: {
 		type: Number,
+		required: true
+	},
+	paymentMethod: {
+		type: String,
 		required: true
 	},
 	status: {
