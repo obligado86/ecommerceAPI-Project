@@ -89,6 +89,10 @@ module.exports.browseAllProduct = () => {
 	return Product.find({isActive: true}).then(result => result).catch(err => err);
 };
 
+module.exports.allInactiveProduct = () => {
+	return Product.find({isActive: false}).then(result => result).catch(err => err);
+};
+
 //search by category
 
 module.exports.browseByCategory = (reqBody) => {

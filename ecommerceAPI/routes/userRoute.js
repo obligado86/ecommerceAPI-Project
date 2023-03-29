@@ -66,6 +66,12 @@ router.get("/collection", (req, res) => {
 	userController.browseAllProduct().then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
 });
 
+// see all inactive products
+
+router.get("/archived", (req, res) => {
+	userController.allInactiveProduct().then(resultFromController => res.status(200).send(resultFromController)).catch(err => console.log(err));
+});
+
 // see products by category
 
 router.get("/collection/category", (req, res) => {
