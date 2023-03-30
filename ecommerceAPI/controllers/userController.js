@@ -69,12 +69,10 @@ module.exports.userProfile = (reqParams) => {
 	})
 }
 
-// see user orders
+// see user orders by status
 module.exports.seeUserOrder = (reqParams) => {
-	return User.findById(reqParams.userId).then(user => {
-		return user.orders
-	}).catch(err => console.log(err))
-} 
+	return Order.find({userId: reqParams.userId, status: reqParams.status}).then(result => result).catch(err => console.log(err))
+}
 
 // see single product
 
@@ -95,14 +93,18 @@ module.exports.allInactiveProduct = () => {
 
 //search by category
 
-module.exports.browseByCategory = (reqBody) => {
-	return Product.find({isActive: true, category: reqBody.category}).then(result => result).catch(err => err);
+module.exports.browseByCategory = (reqParams) => {
+	if(reqParams.categoryName === allproducts){
+		return Product.find({isActive: true}).then(result => result).catch(err => err)
+	} else {
+		return Product.find({isActive: true, category: reqParams.categoryName}).then(result => result).catch(err => err);
+	}
 };
 
 //search by name
 
-module.exports.search = (reqBody) => {
-	return Product.find({isActive: true, name: reqBody.name}).then(result => result).catch(err => err);
+module.exports.search = (reqParams) => {
+	return Product.find({isActive: true, name: reqParams.name}).then(result => result).catch(err => console.log(err));
 };
 
 //user address
@@ -119,14 +121,14 @@ module.exports.findAddress = (reqParams) => {
 
 // view user orders
 
-module.exports.viewOrders = (user) => {
-	return User.findById(user.id).then(result => {
-		if(!result.orders){
-			return false;
-		} else {
-			return Order.findById(result.orders._id).then(items => {
+module.exports.viewOrders = (reqParams) => {
+	return User.findById(reqParams.userId).then(user => {
+		if(user.orders.length >= 0){
+			return Order.findById(user.orders.orderId).then(items => {
 				return items;
 			}).catch(err => err)
+		} else {
+			return false;
 		}
 	}).catch(err => err);
 }

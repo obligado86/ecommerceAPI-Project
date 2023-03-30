@@ -61,19 +61,14 @@ router.patch("/product/:productId/archive", (req, res) => {
 
 // reactivate product
 
-router.patch("/product/:productId/activate", auth.verify, (req, res) => {
-	const adminVerify = auth.decode(req.headers.authorization).isAdmin;
-	if(adminVerify){
-		adminController.reactivateProduct(req.params).then(resultFromController => {
-			if(!resultFromController){
-				return res.status(400).send(resultFromController);
-			} else {
-				return res.status(204).send(resultFromController)
-			}
-		})
-	} else {
-		return res.status(404).send(false);
-	}
+router.patch("/product/:productId/activate", (req, res) => {
+	adminController.reactivateProduct(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(400).send(resultFromController);
+		} else {
+			return res.status(204).send(false)
+		}
+	}).catch(err => console.log(err))
 })
 
 //=================== End of Router =================//

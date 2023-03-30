@@ -48,9 +48,9 @@ router.get("/:userId/profile", (req, res) => {
 	userController.userProfile(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => console.log(err))
 })
 
-//see user pending order
+//see user pending order by status
 
-router.get("/:userId/order", (req, res) => {
+router.get("/:userId/order/:status", (req, res) => {
 	userController.seeUserOrder(req.params).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
 });
 
@@ -74,14 +74,14 @@ router.get("/archived", (req, res) => {
 
 // see products by category
 
-router.get("/collection/category", (req, res) => {
-	userController.browseByCategory(req.body).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
+router.get("/collection/:categoryName", (req, res) => {
+	userController.browseByCategory(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
 });
 
 // see products by name
 
-router.get("/collection/search", (req, res) => {
-	userController.search(req.body).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
+router.get("/collection/:name", (req, res) => {
+	userController.search(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
 });
 
 // see user address
@@ -92,21 +92,14 @@ router.get("/:userId/address", (req, res) => {
 
 // retrieve all orders
 
-router.get("/:userId/myOrders", auth.verify, (req, res) => {
-	const userAuth = auth.decode(req.headers.authorization);
-	if(!userAuth.id){
-		return res.status(404).send(false)
-	} else if (userAuth.isAdmin){
-		return res.status(400).send(false)
-	} else {
-		userController.viewOrders({userId: userAuth.id}).then(resultFromController => {
-			if(!resultFromController){
-				return res.status(400).send(false);
-			} else {
-				return res.status(200).send(resultFromController);
-			}
-		});
-	}
+router.get("/:userId/myorder", (req, res) => {
+	userController.viewOrders(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(400).send(false);
+		} else {
+			return res.status(200).send(resultFromController);
+		}
+	}).catch(err => console.log(err))
 });
 
 // add to cart
