@@ -47,6 +47,42 @@ router.put("/:productId", (req, res) => {
 	})
 });
 
+// confirm order payment 
+
+router.patch("/:orderId", (req, res) => {
+	adminController.confirmPayment(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(200).send(true);
+		} else {
+			return res.status(400).send(false)
+		}
+	}).catch(err => console.log(err));
+})
+
+// confirm order payment 
+
+router.patch("/:orderId/cancel", (req, res) => {
+	adminController.confirmCancel(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(200).send(true);
+		} else {
+			return res.status(400).send(false)
+		}
+	}).catch(err => console.log(err));
+})
+
+// confirm order shippment 
+
+router.patch("/:orderId/cancel", (req, res) => {
+	adminController.confirmCancel(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(200).send(true);
+		} else {
+			return res.status(400).send(false)
+		}
+	}).catch(err => console.log(err));
+})
+
 // archive product
 
 router.patch("/product/:productId/archive", (req, res) => {

@@ -276,7 +276,23 @@ module.exports.checkOut = (reqParams, reqBody) => {
 }
 
 
+//cancel order 
 
+module.exports.cancelOrder = (reqParams) => {
+	let confirmmation = {
+		status: "for cancelation"
+	};
+	return Order.findByIdAndUpdate(reqParams.orderId, confirmmation).catch(err => err)
+};
+
+//cancel order 
+
+module.exports.recieveOrder = (reqParams) => {
+	let confirmmation = {
+		status: "delivered"
+	};
+	return Order.findByIdAndUpdate(reqParams.orderId, confirmmation).catch(err => err)
+};
 
 // set user as admin
 

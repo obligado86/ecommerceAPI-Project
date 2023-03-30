@@ -152,6 +152,30 @@ router.post("/:userId/mycart/checkout", (req, res) => {
 	}).catch(err => err);
 });
 
+// cancel order 
+
+router.patch("/:orderId/cancel", (req, res) => {
+	userController.cancelOrder(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(200).send(true);
+		} else {
+			return res.status(400).send(false)
+		}
+	}).catch(err => console.log(err));
+})
+
+// confirm recieved order 
+
+router.patch("/:orderId/recieved", (req, res) => {
+	userController.recieveOrder(req.params).then(resultFromController => {
+		if(!resultFromController){
+			return res.status(200).send(true);
+		} else {
+			return res.status(400).send(false)
+		}
+	}).catch(err => console.log(err));
+})
+
 // set admin user
 
 router.patch("/:userId/setAsAdmin", auth.verify, (req, res) => {

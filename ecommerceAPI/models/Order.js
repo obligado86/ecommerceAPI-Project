@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema({
 		},
 		productImage: {
 			type: String,
-			required: true
+			default: "https://www.micreate.eu/wp-content/img/default-img.png"
 		},
 		productName: {
 			type: String,
@@ -45,7 +45,7 @@ const orderSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ["pending", "processsing", "shipped out", "delivered", "returned", "canceled"],
+		enum: ["pending", "processsing", "shipped out", "delivered", "returned", "for cancelation", "canceled"],
 		default: "pending"
 	},
 	purchaseOn: {

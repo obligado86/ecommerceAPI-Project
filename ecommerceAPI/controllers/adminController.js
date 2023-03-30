@@ -62,6 +62,24 @@ module.exports.updateProduct = (reqParams, reqBody) => {
 	return Product.findByIdAndUpdate(reqParams.productId, updateInfo).then(update => update).catch(err => err);
 };
 
+//confirm order 
+
+module.exports.confirmPayment = (reqParams) => {
+	let confirmmation = {
+		status: "processsing"
+	};
+	return Order.findByIdAndUpdate(reqParams.orderId, confirmmation).catch(err => err)
+};
+
+//confirm order cancel
+
+module.exports.confirmCancel = (reqParams) => {
+	let confirmmation = {
+		status: "canceled"
+	};
+	return Order.findByIdAndUpdate(reqParams.orderId, confirmmation).catch(err => err)
+};
+
 // archive product 
 
 module.exports.archiveProduct = (reqParams) => {
