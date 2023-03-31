@@ -93,11 +93,12 @@ module.exports.allInactiveProduct = () => {
 
 //search by category
 
-module.exports.browseByCategory = (reqParams) => {
-	if(reqParams.categoryName === allproducts){
+module.exports.browseByCategory = (reqBody) => {
+	let search = {category: reqBody.category}
+	if(search.category === "allproducts"){
 		return Product.find({isActive: true}).then(result => result).catch(err => err)
 	} else {
-		return Product.find({isActive: true, category: reqParams.categoryName}).then(result => result).catch(err => err);
+		return Product.find({isActive: true, category: search.category}).then(result => result).catch(err => err);
 	}
 };
 

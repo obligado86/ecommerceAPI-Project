@@ -74,8 +74,8 @@ router.get("/archived", (req, res) => {
 
 // see products by category
 
-router.get("/collection/:categoryName", (req, res) => {
-	userController.browseByCategory(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
+router.post("/collection/category", (req, res) => {
+	userController.browseByCategory(req.body).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
 });
 
 // see products by name
