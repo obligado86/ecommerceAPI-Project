@@ -80,7 +80,7 @@ router.get("/collection/:categoryName", (req, res) => {
 
 // see products by name
 
-router.get("/collection/:name", (req, res) => {
+router.get("/products/:name", (req, res) => {
 	userController.search(req.params).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
 });
 
