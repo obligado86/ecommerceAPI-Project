@@ -28,6 +28,11 @@ module.exports.getUserOrder = () => {
 	})
 }
 
+// see user orders by status
+module.exports.seeOrderByStatus = (reqParams) => {
+	return Order.find({status: reqParams.status}).then(result => result).catch(err => console.log(err))
+}
+
 // add products 
 
 module.exports.addProduct = (reqBody) => {

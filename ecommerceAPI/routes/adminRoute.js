@@ -22,6 +22,12 @@ router.get("/orders", (req, res) => {
 	adminController.getUserOrder().then(resultFromController => res.send(resultFromController)).catch(err => res.status(400).send(err));
 });
 
+//retrieve orders by status 
+
+router.get("/order/:status", (req, res) => {
+	adminController.seeOrderByStatus(req.params).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
+});
+
 // add products
 
 router.post("/newproduct", (req, res) => {
