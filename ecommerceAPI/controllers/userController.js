@@ -102,6 +102,13 @@ module.exports.browseByCategory = (reqBody) => {
 	}
 };
 
+//search by category
+
+module.exports.browseByBrand = (reqBody) => {
+	let search = {brand: reqBody.brand}
+	return Product.find({isActive: true, brand: search.brand}).then(result => result).catch(err => err);
+};
+
 //search by name
 
 module.exports.search = (reqParams) => {

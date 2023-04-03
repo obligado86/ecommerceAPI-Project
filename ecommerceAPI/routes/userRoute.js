@@ -78,6 +78,12 @@ router.post("/collection/category", (req, res) => {
 	userController.browseByCategory(req.body).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
 });
 
+//see products by brand
+
+router.post("/collection/brand", (req, res) => {
+	userController.browseByBrand(req.body).then(resultFromController => res.status(200).send(resultFromController)).catch(err => res.status(404).send(err));
+});
+
 // see products by name
 
 router.get("/products/:name", (req, res) => {

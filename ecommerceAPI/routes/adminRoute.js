@@ -18,14 +18,14 @@ router.get("/:userId/userDetails", auth.verify, (req, res) => {
 
 // retrieve all orders
 
-router.get("/orders", (req, res) => {
+/*router.get("/orders", (req, res) => {
 	adminController.getUserOrder().then(resultFromController => res.send(resultFromController)).catch(err => res.status(400).send(err));
-});
+});*/
 
 //retrieve orders by status 
 
-router.get("/order/:status", (req, res) => {
-	adminController.seeOrderByStatus(req.params).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
+router.get("/orders", (req, res) => {
+	adminController.seeOrderByStatus(req.body).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
 });
 
 // add products
@@ -55,7 +55,7 @@ router.put("/:productId", (req, res) => {
 
 // confirm order payment 
 
-router.patch("/:orderId", (req, res) => {
+router.patch("/:orderId/confirm", (req, res) => {
 	adminController.confirmPayment(req.params).then(resultFromController => {
 		if(!resultFromController){
 			return res.status(200).send(true);
@@ -79,8 +79,8 @@ router.patch("/:orderId/cancel", (req, res) => {
 
 // confirm order shippment 
 
-router.patch("/:orderId/cancel", (req, res) => {
-	adminController.confirmCancel(req.params).then(resultFromController => {
+router.patch("/:orderId/toship", (req, res) => {
+	adminController.confirmShipment(req.params, req.body).then(resultFromController => {
 		if(!resultFromController){
 			return res.status(200).send(true);
 		} else {

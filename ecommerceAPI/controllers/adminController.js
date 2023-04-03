@@ -22,15 +22,15 @@ module.exports.getUserDetails = (reqParams) => {
 
 // retrive all orders
 
-module.exports.getUserOrder = () => {
+/*module.exports.getUserOrder = () => {
 	return Order.find({}).then(result => {
 		return result;
 	})
-}
+}*/
 
 // see user orders by status
-module.exports.seeOrderByStatus = (reqParams) => {
-	return Order.find({status: reqParams.status}).then(result => result).catch(err => console.log(err))
+module.exports.seeOrderByStatus = (reqBody) => {
+	return Order.find({status: reqBody.status}).then(result => result).catch(err => console.log(err))
 }
 
 // add products 
@@ -72,6 +72,16 @@ module.exports.updateProduct = (reqParams, reqBody) => {
 module.exports.confirmPayment = (reqParams) => {
 	let confirmmation = {
 		status: "processsing"
+	};
+	return Order.findByIdAndUpdate(reqParams.orderId, confirmmation).catch(err => err)
+};
+
+//confirm order shippment
+
+module.exports.confirmPayment = (reqParams, reqBody) => {
+	let confirmmation = {
+		status: "shippedout",
+		trackingInfo: reqBody.trackingInfo
 	};
 	return Order.findByIdAndUpdate(reqParams.orderId, confirmmation).catch(err => err)
 };

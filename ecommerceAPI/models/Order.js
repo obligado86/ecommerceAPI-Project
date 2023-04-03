@@ -48,6 +48,10 @@ const orderSchema = new mongoose.Schema({
 		enum: ["pending", "processsing", "shippedout", "delivered", "returned", "forcancelation", "canceled"],
 		default: "pending"
 	},
+	trackingInfo: {
+		type: String,
+		default: "None"
+	},
 	purchaseOn: {
 		type: Date,
 		default: new Date()
