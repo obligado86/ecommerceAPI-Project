@@ -70,8 +70,8 @@ module.exports.userProfile = (reqParams) => {
 }
 
 // see user orders by status
-module.exports.seeUserOrder = (reqParams) => {
-	return Order.find({userId: reqParams.userId, status: reqParams.status}).then(result => result).catch(err => console.log(err))
+module.exports.seeUserOrder = (reqParams, reqBody) => {
+	return Order.find({userId: reqParams.userId, status: reqBody.status}).then(result => result).catch(err => console.log(err))
 }
 
 // see single product

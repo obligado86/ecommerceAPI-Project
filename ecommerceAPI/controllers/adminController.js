@@ -78,7 +78,7 @@ module.exports.confirmPayment = (reqParams) => {
 
 //confirm order shippment
 
-module.exports.confirmPayment = (reqParams, reqBody) => {
+module.exports.confirmShipment = (reqParams, reqBody) => {
 	let confirmmation = {
 		status: "shippedout",
 		trackingInfo: reqBody.trackingInfo

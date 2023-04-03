@@ -50,8 +50,8 @@ router.get("/:userId/profile", (req, res) => {
 
 //see user pending order by status
 
-router.get("/:userId/order/:status", (req, res) => {
-	userController.seeUserOrder(req.params).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
+router.get("/:userId/orders", (req, res) => {
+	userController.seeUserOrder(req.params, req.body).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
 });
 
 //see products on orders
