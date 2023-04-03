@@ -24,7 +24,7 @@ router.get("/:userId/userDetails", auth.verify, (req, res) => {
 
 //retrieve orders by status 
 
-router.get("/orders", (req, res) => {
+router.post("/orders", (req, res) => {
 	adminController.seeOrderByStatus(req.body).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
 });
 
