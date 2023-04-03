@@ -12,20 +12,14 @@ router.get("/:userId/userDetails", auth.verify, (req, res) => {
 	if(!userData.isAdmin){
 		return res.status(404).send(resultFromController);
 	} else {
-		adminController.getUserDetails(req.params).then(resultFromController => res.send(resultFromController)).catch(err => res.status(400).send(err));
+		adminController.getUserDetails(req.params).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err));
 	}
 });
 
-// retrieve all orders
-
-/*router.get("/orders", (req, res) => {
-	adminController.getUserOrder().then(resultFromController => res.send(resultFromController)).catch(err => res.status(400).send(err));
-});*/
-
 //retrieve orders by status 
 
-router.post("/orders", (req, res) => {
-	adminController.seeOrderByStatus(req.body).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
+router.get("/orders/:status", (req, res) => {
+	adminController.seeOrderByStatus(req.params).then(resultFromController => res.send(resultFromController)).catch(err => console.log(err))
 });
 
 // add products

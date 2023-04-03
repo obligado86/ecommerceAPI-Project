@@ -29,9 +29,9 @@ module.exports.getUserDetails = (reqParams) => {
 }*/
 
 // see user orders by status
-module.exports.seeOrderByStatus = (reqBody) => {
-	return Order.find({status: reqBody.status}).then(result => result).catch(err => console.log(err))
-}
+module.exports.seeOrderByStatus = (reqParams) => {
+	return Order.find({status: reqParams.status}).then(result => result).catch(err => console.log(err))
+};
 
 // add products 
 
